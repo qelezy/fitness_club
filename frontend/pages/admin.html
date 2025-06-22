@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Фитнес-клуб</title>
+    <link rel="stylesheet" href="../../node_modules/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../styles/style.css">
+    <script src="../../node_modules/pdfmake/build/pdfmake.min.js" defer></script>
+    <script src="../../node_modules/pdfmake/build/vfs_fonts.js" defer></script>
+    <script src="../../node_modules/html-to-pdfmake/browser.js" defer></script>
+    <script type="module" src="../scripts/sidebar.js" defer></script>
+    <script type="module" src="../scripts/admin.js" defer></script>
+  </head>
+  <body>
+    <div class="sidebar" id="sidebar">
+      <div class="logo-content">
+        <i class="bi-list" id="sidebar-btn"></i>
+      </div>
+      <div class="sidebar-content"> 
+        <ul class="nav-list">
+          <li>
+            <div class="nav-item-content">
+              <div class="nav-item-text">
+                <i class="bi-table"></i>
+                <span>Управление</span>
+              </div>
+              <i class="bi-chevron-down arrow"></i>
+            </div>
+            <div class="tooltip">
+              <span>Управление</span>
+            </div>
+            <ul class="nav-item-sub-menu" id="tables">
+              <li class="sub-menu-header"><span>Управление</span></li>
+              <li><span value="administrators">Администраторы</span></li>
+              <li><span value="clients">Клиенты</span></li>
+              <li><span value="coaches">Тренеры</span></li>
+              <li><span value="training_sessions">Тренировки</span></li>
+            </ul>
+          </li>
+          <li>
+            <div class="nav-item-content">
+              <div class="nav-item-text">
+                <i class="bi-file-text"></i>
+                <span>Отчёты</span>
+              </div>
+              <i class="bi-chevron-down arrow"></i>
+            </div>
+            <div class="tooltip">
+              <span>Отчёты</span>
+            </div>
+            <ul class="nav-item-sub-menu" id="reports">
+              <li class="sub-menu-header"><span>Отчёты</span></li>
+              <li><span value="workload">Загруженность тренеров</span></li>
+              <li><span value="sales">Продажи абонементов</span></li>
+              <li><span value="schedule">Расписание тренировок</span></li>
+            </ul>
+          </li>
+        </ul>
+        <div class="user-info">
+          <button class="user-profile-btn" id="user-profile-btn"><i class="bi-person-circle"></i><span class="username"></span></button>
+          <i id="logout-btn" class="bi-box-arrow-right"></i>
+        </div>
+      </div>
+    </div>
+    <main>
+      <div class="start-info" id="start-info">
+        <i class="bi-info-circle"></i>
+        <p class="start-text">Для начала работы необходимо воспользоваться левым боковым меню</p>
+      </div>
+      <div class="report-window" id="report-window">
+        <header>
+          <h2 id="report-name">Название таблицы</h2>
+          <div class="buttons-group">
+            <button id="save-report">Сохранить в PDF</button>
+          </div>
+        </header>
+        <div class="report-container">
+          <section class="form-report-section">
+            
+          </section>
+          <section class="report-section">
+            <div style="overflow: auto;">
+              <table id=report-result cellspacing="0" cellpadding="0">
+                <thead id="report-header"></thead>
+                <tbody id="report-content"></tbody>
+              </table>
+            </div>
+            <div class="report-pages">
+              <div class="report-page-records">
+                <p>Записи: <span id="report-records-start">1</span> - <span id="report-records-end">10</span> из <span id="report-records-total">100</span></p>
+              </div>
+              <ul class="report-pages-list" id="report-pages-list">
+              </ul>
+            </div>
+          </section>
+        </div>
+      </div>
+      <div class="main-window" id="main-window">
+        <header>
+          <h2 id="table-name">Название таблицы</h2>
+          <div class="buttons-group">
+            <button id="save-table">Сохранить в PDF</button>
+            <div class="add-record-dropdown">
+              <button id="add-record">Добавить</button>
+              <div class="add-record-container">
+                <div class="add-record-content"></div>
+                <button id="confirm-add-record">Добавить запись</button>
+              </div>
+            </div>
+            <div class="edit-record-dropdown">
+              <button id="edit-record">Редактировать</button>
+              <div class="edit-record-container">
+                <div class="edit-record-content"></div>
+                <button id="confirm-edit-record">Сохранить изменения</button>
+              </div>
+            </div>
+            <button id="delete-record">Удалить</button>
+          </div>
+        </header>
+        <div class="main-content">
+          <section class="filter-section">
+            <div class="filter-header">
+              <div class="search">
+                <i class="bi-search"></i>
+                <input type="text" id="search-input" placeholder="Поиск">
+              </div>
+              <div class="filter-container">
+                <div class="filter-group">
+                  <div class="filter-dropdown">
+                    <button id="filter-btn">
+                      <i class="bi-filter"></i>
+                      <span>Фильтр</span>
+                    </button>
+                    <div class="filter-dropdown-content">
+                      
+                    </div>
+                  </div>
+                  <div class="dropdown-show-column">
+                    <button id="show-column-btn">
+                      <i class="bi-eye"></i>
+                      <span>Отображаемые столбцы</span>
+                    </button>
+                    <div class="show-column-content" id="show-column-content">
+
+                    </div>
+                  </div>
+                </div>
+                <button id="reset-btn">
+                  <i class="bi-arrow-clockwise"></i>
+                  <span>Сбросить</span>
+                </button>
+              </div>
+            </div>
+            <div class="filter-body">
+            </div>
+          </section>
+          <section class="table-section">
+            <div style="overflow: auto;">
+              <table id=table cellspacing="0" cellpadding="0">
+                <thead id="table-header"></thead>
+                <tbody id="table-content"></tbody>
+              </table>
+            </div>
+            <div class="pages">
+              <div class="page-records">
+                <p>Записи: <span id="records-start">1</span> - <span id="records-end">10</span> из <span id="records-total">100</span></p>
+              </div>
+              <ul class="pages-list" id="pages-list">
+              </ul>
+            </div>
+          </section>
+        </div>
+      </div>
+      <div class="profile-window" id="profile-window">
+        <header>
+          <h2>Мой профиль</h2>
+        </header>
+        <div class="profile-container">
+          <section class="profile-section">
+            <div class="profile">
+              <div class="profile-item">
+                <span>ФИО:</span>
+                <span id="user-full-name"></span>
+              </div>
+              <div class="profile-item">
+                <span>Телефон:</span>
+                <span id="user-phone"></span>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Фитнес-клуб</title>
+    <link rel="stylesheet" href="../../node_modules/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/modal.css">
+    <link rel="stylesheet" href="../styles/form.css">
+    <script src="https://unpkg.com/imask" defer></script>
+    <script type="module" src="../scripts/signup.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <div class="signup-container">
+        <form id="signup-form" class="signup-form">
+          <h2>Регистрация</h2>
+          <div class="signup-form-body">
+            <div class="form-input-container">
+              <label for="full-name-input">ФИО<span>*</span></label>
+              <input type="text" id="full-name-input" name="phone" required></input>
+            </div>
+            <div class="form-input-container">
+              <label for="phone-input">Номер телефона<span>*</span></label>
+              <input type="text" id="phone-input" placeholder="8(XXX)XXX-XX-XX" name="phone" required></input>
+            </div>
+            <div class="form-input-container">
+              <label for="date-input">Дата рождения</label>
+              <input type="date" id="date-input" name="birthday"></input>
+            </div>
+            <div class="form-input-container">
+              <label for="password-input">Пароль<span>*</span></label>
+              <input type="password" id="password-input" name="password" required></input>
+            </div>
+            <div class="form-input-container">
+              <label for="repeat-password-input">Повторите пароль<span>*</span></label>
+              <input type="password" id="repeat-password-input" name="repeat_password" required></input>
+            </div>
+          </div>
+          <button type="submit" id="signup-btn">Зарегистрироваться</button>
+          <div class="login-link">
+            <p><span>Уже есть аккаунт?</span> <a href="../pages/login.html">Войти</a></p>
+          </div>
+        </form>
+      </div>
+    </main>
+  </body>
+</html>

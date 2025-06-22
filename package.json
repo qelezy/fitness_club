@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "bootstrap-icons": "^1.11.3",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "html-to-pdfmake": "^2.5.20",
+    "pdfmake": "^0.2.18",
+    "pg": "^8.13.1"
+  }
+}

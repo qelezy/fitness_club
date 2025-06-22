@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Фитнес-клуб</title>
+    <link rel="stylesheet" href="../../node_modules/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../styles/style.css">
+    <script type="module" src="../scripts/coach.js" defer></script>
+  </head>
+  <body>
+    <main class="coach-main">
+      <div id="profile" class="content-section active">
+        <div class="profile">
+          <div class="profile-data">
+            <h2>Мой профиль</h2>
+            <div class="profile-item">
+              <span>ФИО:</span>
+              <span id="user-full-name"></span>
+            </div>
+            <div class="profile-item">
+              <span>Телефон:</span>
+              <span id="user-phone"></span>
+            </div>
+            <button id="logout-btn">Выйти</button>
+          </div>
+        </div>
+        <div class="bookings">
+          <h2>Мои тренировки</h2>
+          <ul id="bookings">
+          </ul>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

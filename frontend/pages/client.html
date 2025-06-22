@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Фитнес-клуб</title>
+    <link rel="stylesheet" href="../../node_modules/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../styles/style.css">
+    <script type="module" src="../scripts/client.js" defer></script>
+  </head>
+  <body>
+    <div id="pending-modal-overlay" class="modal-overlay"></div>
+    <div id="pending-modal" class="modal">
+      <i id="close-modal-btn" class="bi-x-lg"></i>
+      <div class="modal-content">
+        <h3>Купленные абонементы</h3>
+        <div id="pending-subscriptions" class="subscription-list"></div>
+      </div>
+    </div>
+    <header>
+      <ul class="navbar">
+        <li class="nav-item" data-section="profile">
+          <i class="bi-person-circle"></i>
+          <span>Профиль</span>
+        </li>
+        <li class="nav-item" data-section="coaches">
+          <i class="bi-people-fill"></i>
+          <span>Тренеры</span>
+        </li>
+        <li class="nav-item" data-section="subscription">
+          <i class="bi-credit-card"></i>
+          <span>Приобрести абонемент</span>
+        </li>
+        <li class="nav-item" data-section="booking">
+          <i class="bi-calendar-check"></i>
+          <span>Записаться на тренировку</span>
+        </li>
+      </ul>
+    </header>
+    <main class="client-main">
+      <div id="profile" class="content-section active">
+        <div class="profile">
+          <div class="profile-data">
+            <h2>Мой профиль</h2>
+            <div class="profile-item">
+              <span>ФИО:</span>
+              <span id="user-full-name"></span>
+            </div>
+            <div class="profile-item">
+              <span>Телефон:</span>
+              <span id="user-phone"></span>
+            </div>
+            <button id="logout-btn">Выйти</button>
+          </div>
+        </div>
+        <div class="subscription">
+          <h2>Мой абонемент</h2>
+          <div id="active-subscription"></div>
+          <button id="show-pending">Купленные абонементы</button>
+        </div>
+        <div class="bookings">
+          <h2>Мои тренировки</h2>
+          <ul id="bookings">
+          </ul>
+        </div>
+      </div>
+      <div id="coaches" class="content-section">
+        <div class="coaches">
+          <h2>Наши тренеры</h2>
+          <div class="coaches-grid">
+          </div>
+        </div>
+      </div>
+      <div id="subscription" class="content-section">
+        <div class="subscriptions">
+          <h2>Выберите абонемент</h2>
+          <div class="subscriptions-grid">
+          </div>
+        </div>
+      </div>
+      <div id="booking" class="content-section">
+        <div class="booking">
+          <div class="training-type-toggle">
+            <button class="toggle-btn active" data-type="group">Групповые</button>
+            <button class="toggle-btn" data-type="individual">Индивидуальные</button>
+          </div>
+          <div id="group-trainings" class="training-view active">
+            <div id="calendar-weeks" class="calendar-weeks"></div>
+            <div id="group-training-list" class="training-list"></div>
+          </div>
+          <div id="individual-trainings" class="training-view">
+            <form id="individual-form">
+              <div class="custom-dropdown" id="coach-dropdown">
+                <div class="dropdown-selected" id="selected-coach" data-id="">Выберите тренера</div>
+                <div class="dropdown-options" id="coach-options"></div>
+              </div>
+              <label>
+                <span>Дата</span>
+                <input type="date" id="individual-date" required>
+              </label>
+              <label>
+                <span>Время</span>
+                <input type="time" id="individual-time" required>
+              </label>
+              <button id="submit-btn" type="submit">Записаться</button>
+            </form>
+          </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

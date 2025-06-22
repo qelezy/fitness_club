@@ -1,0 +1,54 @@
+:root {
+    --bg-color: #eeeeee;
+    --main-color: #ffffff;
+    --border-color: #e7e7e7;
+    --shadow-color: #00000025;
+    --btn-bg-color: #7ec6f338;
+    --btn-fg-color: #0197F6;
+    --btn-active-color: #0089df;
+    --btn-edit-bg-color: #61a18e3d;
+    --btn-edit-fg-color: #04A777;
+    --btn-edit-active-color: #03996c;
+    --btn-del-bg-color: #da6d7b3b;
+    --btn-del-fg-color: #db162f;
+    --btn-del-active-color: #c5132a;
+    --btn-save-fg-color: #696969;
+    --btn-save-active-color: #585858;
+    --text-color: #273043;
+    --row-hover-color: #f6f6f6;
+    --null-color: #c0c0c0;
+    --table-header-hover-color: #7ec6f354;
+    --inner-table-header-color: #83c7f11f;
+}
+
+@font-face {
+    font-family: 'Inter Regular';
+    font-style: normal;
+    font-weight: normal;
+    src: url('../fonts/Inter-Regular.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'Inter Light';
+    font-style: normal;
+    font-weight: normal;
+    src: url('../fonts/Inter-Light.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'Inter Medium';
+    font-style: normal;
+    font-weight: normal;
+    src: url('../fonts/Inter-Medium.woff') format('woff');
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-color);
+    width: 100%;
+}
