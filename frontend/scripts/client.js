@@ -351,56 +351,58 @@ function fetchCoaches() {
     });
 }
 
+const SUBSCRIPTION_PLANS = [
+    { title: '1 месяц', price: 2000, duration: 1 },
+    { title: '3 месяца', price: 5000, duration: 3 },
+    { title: '6 месяцев', price: 10000, duration: 6 },
+    { title: '12 месяцев', price: 18000, duration: 12 }
+];
+
 function loadSubscriptions() {
-    const subscriptions = [
-        { title: '1 месяц', price: 2000, duration: 1 },
-        { title: '3 месяца', price: 5000, duration: 3 },
-        { title: '6 месяцев', price: 10000, duration: 6 },
-        { title: '12 месяцев', price: 18000, duration: 12 }
-    ];
-
     const grid = document.querySelector('.subscriptions-grid');
+    if (!grid) return;
 
-    subscriptions.forEach((plan, index) => {
+    grid.innerHTML = '';
+
+    SUBSCRIPTION_PLANS.forEach((plan, index) => {
         const card = document.createElement('div');
         card.className = 'subscription-card';
         card.innerHTML = `
             <h3>${plan.title}</h3>
             <div class="price">${plan.price} ₽</div>
-            <button data-index="${index}">Выбрать</button>
+            <button type="button" data-index="${index}">Выбрать</button>
         `;
         grid.appendChild(card);
     });
 
-    grid.addEventListener('click', function (e) {
-        if (e.target.tagName === 'BUTTON') {
-            const index = e.target.getAttribute('data-index');
-            const selectedPlan = subscriptions[index];
+    if (!grid.dataset.handlerBound) {
+        grid.dataset.handlerBound = '1';
+        grid.addEventListener('click', handleSubscriptionGridClick);
+    }
+}
 
-            console.log('Оформляется абонемент:', selectedPlan);
+function handleSubscriptionGridClick(e) {
+    const btn = e.target.closest('button[data-index]');
+    if (!btn) return;
+    const index = parseInt(btn.getAttribute('data-index'), 10);
+    if (isNaN(index) || index < 0 || index >= SUBSCRIPTION_PLANS.length) return;
 
-            const today = new Date();
-            const purchaseDate = today.toISOString().split('T')[0];
+    const plan = SUBSCRIPTION_PLANS[index];
+    const purchaseDate = new Date().toISOString().split('T')[0];
 
-            fetch(serverLink + 'subscriptions/add', {
-                method: 'POST',
-                credentials: 'include',
-                headers: { 
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    duration: selectedPlan.duration,
-                    price: selectedPlan.price,
-                    purchase_date: purchaseDate
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.message) {
-                    showModal(data.message);
-                }
-            });
-        }
+    fetch(serverLink + 'subscriptions/add', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            duration: plan.duration,
+            price: plan.price,
+            purchase_date: purchaseDate
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.message) showModal(data.message);
     });
 }
 

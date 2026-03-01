@@ -781,7 +781,7 @@ function getHeader() {
     } else {
         headers = keys.slice(1);
     }
-    header = '<tr>';
+    let header = '<tr>';
     for (const key of headers) {
         header += `<th>${getHeaderName(key)}</th>`;
     }
@@ -1257,8 +1257,43 @@ showColumnBtn.addEventListener('click', () => {
 
 searchInput.addEventListener('input', () => {
     const text = searchInput.value.toLowerCase();
+    let dataToSearch = data;
+    if (activeFilters.length > 0) {
+        activeFilters.forEach(filter => {
+            dataToSearch = dataToSearch.filter(item => {
+                if (!filter.key.includes('status') && !filter.key.includes('type') && !filter.key.includes('category')) {
+                    const fromValue = filter.values.find(({ index }) => index === 0)?.value;
+                    const toValue = filter.values.find(({ index }) => index === 1)?.value;
+                    if (filter.key.includes('_date') || filter.key.includes('birthday')) {
+                        const itemValue = formatDate(item[filter.key]);
+                        if (fromValue !== undefined && toValue !== undefined) {
+                            return itemValue >= fromValue && itemValue <= toValue;
+                        } else if (fromValue !== undefined) {
+                            return itemValue >= fromValue;
+                        } else if (toValue !== undefined) {
+                            return itemValue <= toValue;
+                        }
+                    } else {
+                        if (fromValue !== undefined && toValue !== undefined) {
+                            return item[filter.key] >= fromValue && item[filter.key] <= toValue;
+                        } else if (fromValue !== undefined) {
+                            return item[filter.key] >= fromValue;
+                        } else if (toValue !== undefined) {
+                            return item[filter.key] <= toValue;
+                        }
+                    }
+                } else if (filter.key.includes('category')) {
+                    return filter.values.some(({ value }) => item[filter.key] === value);
+                } else if (filter.key.includes('status') || filter.key.includes('type')) {
+                    const filterValue = filter.values[0]?.value;
+                    return item[filter.key] === filterValue;
+                }
+                return true;
+            });
+        });
+    }
     if (text) {
-        filteredData = filteredData.filter(row => {
+        filteredData = dataToSearch.filter(row => {
             const values = Object.entries(row).slice(1);
             return values.some(([key, value]) => {
                 if (key === 'subscription_status') {
@@ -1274,52 +1309,19 @@ searchInput.addEventListener('input', () => {
             });
         });
     } else {
-        filteredData = data;
+        filteredData = dataToSearch;
         if (activeFilters) {
-            activeFilters.forEach(filter => {
-                filteredData = filteredData.filter(item => {
-                    if (!filter.key.includes('status') && !filter.key.includes('type') && !filter.key.includes('category')) {
-                        const fromValue = filter.values.find(({ index }) => index === 0)?.value;
-                        const toValue = filter.filters.values.find(({ index }) => index === 1)?.value;
-                        if (filter.key.includes('_date') || filter.key.includes('birthday')) {
-                            const itemValue = formatDate(item[filter.key]);
-                            if (fromValue !== undefined && toValue !== undefined) {
-                                return itemValue >= fromValue && itemValue <= toValue;
-                            } else if (fromValue !== undefined) {
-                                return itemValue >= fromValue;
-                            } else if (toValue !== undefined) {
-                                return itemValue <= toValue;
-                            }
-                        } else {
-                            if (fromValue !== undefined && toValue !== undefined) {
-                                return item[filter.key] >= fromValue && item[filter.key] <= toValue;
-                            } else if (fromValue !== undefined) {
-                                return item[filter.key] >= fromValue;
-                            } else if (toValue !== undefined) {
-                                return item[filter.key] <= toValue;
-                            }
-                        }
-                    } else if (filter.key.includes('category')) {
-                        return filter.values.some(({ value }) => item[filter.key] === value);
-                    } else if (filter.key.includes('status') || filter.key.includes('type')) {
-                        const filterValue = filter.values[0]?.value;
-                        return item[filter.key] === filterValue;
+            const tableHeadings = tableHeader.getElementsByTagName('th');
+            [...tableHeadings].forEach(heading => {
+                heading.classList.remove('asc');
+                heading.classList.remove('desc');
+                for (const child of heading.children) {
+                    if (child.tagName == 'I') {
+                        child.style.display = 'none';
                     }
-                    return true;
-                });
+                }
             });
         }
-        const tableHeadings = tableHeader.getElementsByTagName('th');
-        [...tableHeadings].forEach(heading => {
-            heading.classList.remove('asc');
-            heading.classList.remove('desc');
-            for (const child of heading.children) {
-                if (child.tagName == 'I') {
-                    child.style.display = 'none';
-                }
-            }
-        });
-        
     }
     totalRecords = filteredData.length;
     currentPage = 1;
@@ -1331,8 +1333,8 @@ searchInput.addEventListener('input', () => {
 resetBtn.addEventListener('click', () => {
     resetSort();
     resetShowColumn();
-    resetSelection();
     resetFilter();
+    resetSelection();
 });
 
 function resetFilter() {
