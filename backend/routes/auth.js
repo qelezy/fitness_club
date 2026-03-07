@@ -1,6 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const pool = require('../database');
+const { requireAuth } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
@@ -20,11 +21,9 @@ router.post('/check', async (req, res) => {
     }
 });
 
-router.get('/username', async (req, res) => {
+router.get('/username', requireAuth, async (req, res) => {
     try {
         const user = req.session.user;
-        if (!user) return res.status(401).json({ message: 'Пользователь не авторизован' });
-
         let query;
 
         if (user.role === 'admin') {
@@ -45,11 +44,9 @@ router.get('/username', async (req, res) => {
     }
 });
 
-router.get('/profile', async (req, res) => {
+router.get('/profile', requireAuth, async (req, res) => {
     try {
         const user = req.session.user;
-        if (!user) return res.status(401).json({ message: 'Пользователь не авторизован' });
-
         let query;
 
         if (user.role === 'admin') {
@@ -70,60 +67,62 @@ router.get('/profile', async (req, res) => {
     }
 });
 
+async function tryLoginByRole({ phone, password, config, req, res }) {
+    const { table, phoneField, idField, passwordField, role } = config;
+    const query = `SELECT ${idField}, ${passwordField} FROM ${table} WHERE ${phoneField} = $1`;
+    const result = await pool.query(query, [phone]);
+    if (result.rows.length === 0) {
+        return false;
+    }
+    const row = result.rows[0];
+    const match = await bcrypt.compare(password, row[passwordField]);
+    if (!match) {
+        res.status(401).json({ success: false, message: 'Неверный пароль' });
+        return true;
+    }
+    req.session.user = {
+        id: row[idField],
+        role
+    };
+    res.json({ success: true, role: role });
+    return true;
+}
+
 router.post('/login', async (req, res) => {
     try {
         const { phone, password } = req.body;
-        // Проверка среди администраторов
-        const admin = await pool.query(
-            'SELECT administrator_id, administrator_password FROM administrator WHERE administrator_phone_number = $1',
-            [phone]
-        );
-        if (admin.rows.length > 0) {
-            const match = await bcrypt.compare(password, admin.rows[0].administrator_password);
-            if (match) {
-                req.session.user = {
-                    id: admin.rows[0].administrator_id,
-                    role: 'admin'
-                };
-                return res.json({ success: true, role: 'admin' });
-            } else {
-                return res.status(401).json({ success: false, message: 'Неверный пароль' });
+
+        const rolesConfig = [
+            {
+                table: 'administrator',
+                phoneField: 'administrator_phone_number',
+                idField: 'administrator_id',
+                passwordField: 'administrator_password',
+                role: 'admin'
+            },
+            {
+                table: 'coach',
+                phoneField: 'coach_phone_number',
+                idField: 'coach_id',
+                passwordField: 'coach_password',
+                role: 'coach'
+            },
+            {
+                table: 'client',
+                phoneField: 'client_phone_number',
+                idField: 'client_id',
+                passwordField: 'client_password',
+                role: 'client'
+            }
+        ];
+
+        for (const config of rolesConfig) {
+            const handled = await tryLoginByRole({ phone, password, config, req, res });
+            if (handled) {
+                return;
             }
         }
-        // Проверка среди тренеров
-        const coach = await pool.query(
-            'SELECT coach_id, coach_password FROM coach WHERE coach_phone_number = $1',
-            [phone]
-        );
-        if (coach.rows.length > 0) {
-            const match = await bcrypt.compare(password, coach.rows[0].coach_password);
-            if (match) {
-                req.session.user = {
-                    id: coach.rows[0].coach_id,
-                    role: 'coach'
-                };
-                return res.json({ success: true, role: 'coach' });
-            } else {
-                return res.status(401).json({ success: false, message: 'Неверный пароль' });
-            }
-        }
-        // Проверка среди клиентов
-        const client = await pool.query(
-            'SELECT client_id, client_password FROM client WHERE client_phone_number = $1',
-            [phone]
-        );
-        if (client.rows.length > 0) {
-            const match = await bcrypt.compare(password, client.rows[0].client_password);
-            if (match) {
-                req.session.user = {
-                    id: client.rows[0].client_id,
-                    role: 'client'
-                };
-                return res.json({ success: true, role: 'client' });
-            } else {
-                return res.status(401).json({ success: false, message: 'Неверный пароль' });
-            }
-        }
+
         res.status(404).json({ success: false, message: 'Пользователь не найден' });
     } catch (err) {
         console.error(err.message);

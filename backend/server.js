@@ -1,6 +1,7 @@
 const express = require('express');
 const session = require('express-session');
 const cors = require('cors');
+const config = require('./config/config');
 const admininstratorsRoutes = require('./routes/administrators');
 const clientsRoutes = require('./routes/clients');
 const coachesRoutes = require('./routes/coaches');
@@ -15,12 +16,12 @@ const authRoutes = require('./routes/auth');
 
 const app = express();
 app.use(cors({
-    origin: 'http://localhost:5500',
+    origin: config.server.corsOrigin,
     credentials: true
 }));
 app.use(express.json());
 app.use(session({
-    secret: 'secret',
+    secret: config.server.sessionSecret,
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -39,6 +40,6 @@ app.use('/api/workload', workloadRoutes);
 app.use('/api/sales', salesRoutes);
 app.use('/api/auth', authRoutes);
 
-app.listen(8080, () => { 
-    console.log("Сервер работает через порт: 8080"); 
-});
+app.listen(config.server.port, () => { 
+    console.log(`Сервер работает через порт: ${config.server.port}`); 
+}); 
